@@ -983,13 +983,13 @@ function showGameResult() {
   // Étoiles
   let stars, title, sub;
   if (score === 10) {
-    stars = '⭐⭐⭐'; title = 'Parfait !'; sub = 'Tu connais tous les sons !';
+    stars = '⭐⭐⭐'; title = 'Parfait !'; sub = "Tu connais tous les sons !";
   } else if (score >= 7) {
-    stars = '⭐⭐'; title = 'Très bien !'; sub = 'Encore un peu d'entraînement et tu seras parfait !';
+    stars = '⭐⭐'; title = 'Très bien !'; sub = "Encore un peu d'entraînement et tu seras parfait !";
   } else if (score >= 4) {
-    stars = '⭐'; title = 'Bien joué !'; sub = 'Continue à t'entraîner, tu progresses !';
+    stars = '⭐'; title = 'Bien joué !'; sub = "Continue à t'entraîner, tu progresses !";
   } else {
-    stars = '🌱'; title = 'Continue !'; sub = 'Réécoute les sons et réessaie !';
+    stars = '🌱'; title = 'Continue !'; sub = "Réécoute les sons et réessaie !";
   }
   document.getElementById('result-stars').textContent = stars;
   document.getElementById('result-title').textContent = title;
