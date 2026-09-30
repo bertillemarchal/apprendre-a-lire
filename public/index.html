@@ -142,6 +142,99 @@
     .pop-close { background: none; color: var(--ardoise); border: 1.5px solid var(--ardoise); border-radius: 50px; padding: 8px 24px; font-family: 'Lora', serif; font-size: 0.88rem; cursor: pointer; transition: all 0.15s; }
     .pop-close:hover { background: var(--ardoise); color: #fff; }
 
+
+    /* ── JEU ── */
+    .game-question { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .game-progress { width: 100%; background: #e8e4dc; border-radius: 50px; height: 8px; overflow: hidden; }
+    .game-progress-bar { height: 8px; background: var(--sauge); border-radius: 50px; transition: width 0.4s ease; }
+    .game-score-label { font-family: 'Lora', serif; font-style: italic; font-size: 0.88rem; color: var(--sauge); text-align: right; width: 100%; }
+
+    .game-img-card {
+      background: #F0EBE3;
+      border-radius: 24px;
+      padding: 32px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1.5px solid #DDD5CC;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+    .game-img-card .g-emoji { font-size: 5rem; line-height: 1; }
+    .game-img-card img { width: 120px; height: 120px; object-fit: contain; border-radius: 12px; }
+    .game-word {
+      font-family: 'Nunito', Arial, sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      color: var(--ardoise);
+      letter-spacing: 0.05em;
+    }
+    .game-word .game-ph { opacity: 0; }
+
+    .game-choices { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; width: 100%; }
+    .game-choice {
+      background: #fff;
+      border: 2px solid #DDD5CC;
+      border-radius: 14px;
+      padding: 18px 12px;
+      font-family: 'Nunito', Arial, sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--ardoise);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+    .game-choice:hover:not(:disabled) { border-color: var(--ardoise); background: #F0EBE3; transform: translateY(-2px); }
+    .game-choice.correct { background: #D8E8DC; border-color: var(--sauge); color: var(--sauge); animation: bounce 0.4s ease; }
+    .game-choice.wrong   { background: #F2E0DE; border-color: var(--terr);  color: var(--terr); animation: shake 0.4s ease; }
+    .game-choice.reveal  { background: #D8E8DC; border-color: var(--sauge); color: var(--sauge); }
+    .game-choice:disabled { cursor: not-allowed; opacity: 0.7; }
+
+    @keyframes bounce { 0%{transform:scale(1)} 40%{transform:scale(1.1)} 100%{transform:scale(1)} }
+    @keyframes shake  { 0%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} 100%{transform:translateX(0)} }
+
+    .game-feedback {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 1rem;
+      text-align: center;
+      min-height: 24px;
+      transition: opacity 0.2s;
+    }
+
+    /* Score final */
+    .game-result {
+      width: 100%;
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px 28px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      animation: fadeIn 0.4s ease;
+    }
+    .game-result .result-stars { font-size: 3rem; letter-spacing: 4px; }
+    .game-result .result-title {
+      font-family: 'Playwrite BE WAL', cursive;
+      font-size: 1.4rem;
+      color: var(--ardoise);
+      line-height: 1.4;
+    }
+    .game-result .result-score {
+      font-family: 'Nunito', Arial, sans-serif;
+      font-weight: 800;
+      font-size: 2.5rem;
+      color: var(--sauge);
+    }
+    .game-result .result-sub {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #aaa;
+    }
+
     footer { font-family: 'Lora', serif; font-style: italic; font-size: 0.78rem; color: #bbb; text-align: center; padding: 0 24px 32px; }
   </style>
 </head>
@@ -179,7 +272,8 @@
   <div class="inner">
     <button class="back-btn" onclick="goTo('page-accueil')">← Retour</button>
     <div class="sounds-grid" id="sounds-grid"></div>
-    <button class="btn-primary" onclick="goTo('page-choix-univers')">Je suis prêt · Créer une histoire →</button>
+    <button class="btn-primary" onclick="startGame(); goTo('page-jeu')">🎮 Jouer avec les sons</button>
+    <button class="btn-primary" onclick="goTo('page-choix-univers')" style="margin-top:10px;background:var(--sauge)">📖 Créer une histoire →</button>
   </div>
 </div>
 
@@ -264,6 +358,42 @@
       <div class="sons-row" id="sons-legend" style="margin-bottom:16px"></div>
       <button class="btn-primary" onclick="buildAndShow()">🔄 Nouvelle histoire</button>
       <button class="btn-secondary" onclick="restart()">🏠 Recommencer</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ JEU ══ -->
+<div class="page" id="page-jeu">
+  <div class="app-header">
+    <h1>Le jeu<br>des <span>sons</span></h1>
+    <div class="header-sub">Quel son entends-tu dans ce mot ?</div>
+  </div>
+  <div class="inner">
+    <button class="back-btn" onclick="goTo('page-debutant')">← Retour</button>
+
+    <!-- Question -->
+    <div class="game-question" id="game-question">
+      <div style="width:100%">
+        <div class="game-score-label" id="game-score-label">0 / 10</div>
+        <div class="game-progress"><div class="game-progress-bar" id="game-progress-bar" style="width:0%"></div></div>
+      </div>
+      <div class="game-img-card" id="game-img-card">
+        <span class="g-emoji" id="game-emoji"></span>
+        <div class="game-word" id="game-word"></div>
+      </div>
+      <div class="game-feedback" id="game-feedback"></div>
+      <div class="game-choices" id="game-choices"></div>
+    </div>
+
+    <!-- Résultat final -->
+    <div class="game-result" id="game-result" style="display:none">
+      <div class="result-stars" id="result-stars"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <button class="btn-primary" onclick="startGame()" style="margin-top:8px">🔄 Rejouer</button>
+      <button class="btn-secondary" onclick="goTo('page-debutant')">← Retour aux sons</button>
     </div>
   </div>
 </div>
@@ -688,6 +818,186 @@ function parseParagraph(text, usedPhs) {
     usedPhs.add(son);
     return `<span class="ph-hl" data-ph="${son}" style="background:${ph.bg};color:${ph.fg}">${lettres}</span>`;
   });
+}
+
+
+// ── JEU DES SONS ──────────────────────────────────────
+
+// Mots avec UN SEUL phonème difficile, illustrables
+const GAME_WORDS = [
+  { emoji:"🐻", word:"OURS",    ph:"ou",  highlight:"ou" },
+  { emoji:"🍬", word:"BON",     ph:"on",  highlight:"on" },
+  { emoji:"❤️", word:"AIMER",  ph:"ai",  highlight:"ai" },
+  { emoji:"🌙", word:"LUNE",    ph:"ou",  highlight:"u"  },  // son [u] = OU
+  { emoji:"🚂", word:"TRAIN",   ph:"in",  highlight:"ain" },
+  { emoji:"💧", word:"EAU",     ph:"eau", highlight:"eau" },
+  { emoji:"🪿", word:"OIE",     ph:"oi",  highlight:"oi" },
+  { emoji:"🍞", word:"PAIN",    ph:"in",  highlight:"ain" },
+  { emoji:"🐱", word:"CHAT",    ph:"ch",  highlight:"ch" },
+  { emoji:"👶", word:"ENFANT",  ph:"an",  highlight:"an" },
+  { emoji:"🌲", word:"SAPIN",   ph:"in",  highlight:"in" },
+  { emoji:"🐸", word:"GRENOUILLE", ph:"ou", highlight:"ou" },
+  { emoji:"🏠", word:"MAISON",  ph:"on",  highlight:"on" },
+  { emoji:"🌺", word:"FLEUR",   ph:"eau", highlight:"eu" },
+  { emoji:"⭐", word:"ÉTOILE",  ph:"oi",  highlight:"oi" },
+  { emoji:"🐟", word:"POISSON", ph:"on",  highlight:"on" },
+  { emoji:"🍎", word:"POMME",   ph:"on",  highlight:"om" },
+  { emoji:"🦁", word:"LION",    ph:"on",  highlight:"on" },
+  { emoji:"🌈", word:"PLUIE",   ph:"ou",  highlight:"ui" },
+  { emoji:"🎩", word:"CHAPEAU", ph:"eau", highlight:"eau" },
+  { emoji:"🦋", word:"PAPILLON",ph:"on",  highlight:"on" },
+  { emoji:"🐑", word:"MOUTON",  ph:"ou",  highlight:"ou" },
+  { emoji:"🌊", word:"VAGUE",   ph:"an",  highlight:"an" },
+  { emoji:"🎵", word:"CHANSON", ph:"ch",  highlight:"ch" },
+  { emoji:"👆", word:"LOIN",    ph:"oin", highlight:"oin"},
+  { emoji:"🌸", word:"PRINTEMPS",ph:"in", highlight:"in" },
+  { emoji:"🍋", word:"CITRON",  ph:"on",  highlight:"on" },
+  { emoji:"🐮", word:"VACHE",   ph:"ch",  highlight:"ch" },
+  { emoji:"🦊", word:"RENARD",  ph:"an",  highlight:"an" },
+  { emoji:"🎨", word:"PEINTURE",ph:"in",  highlight:"ein"},
+];
+
+const ALL_PH_KEYS = ["ou","on","ai","an","in","eau","oi","oin","ch"];
+
+let gameQueue    = [];
+let gameIndex    = 0;
+let gameScore    = 0;
+let gameAnswered = false;
+
+function startGame() {
+  // Mélanger et prendre 10 mots
+  const shuffled = [...GAME_WORDS].sort(() => Math.random() - 0.5);
+  gameQueue    = shuffled.slice(0, 10);
+  gameIndex    = 0;
+  gameScore    = 0;
+  gameAnswered = false;
+
+  document.getElementById('game-result').style.display   = 'none';
+  document.getElementById('game-question').style.display = 'flex';
+  showGameQuestion();
+}
+
+function showGameQuestion() {
+  if (gameIndex >= gameQueue.length) { showGameResult(); return; }
+
+  const item = gameQueue[gameIndex];
+  gameAnswered = false;
+
+  // Progress
+  const pct = (gameIndex / 10) * 100;
+  document.getElementById('game-progress-bar').style.width = pct + '%';
+  document.getElementById('game-score-label').textContent  = gameScore + ' / ' + gameIndex;
+
+  // Image + mot
+  document.getElementById('game-emoji').textContent = item.emoji;
+
+  // Mot avec phonème discret (souligné seulement après réponse)
+  const wordEl = document.getElementById('game-word');
+  const idx = item.word.toLowerCase().indexOf(item.highlight.toLowerCase());
+  if (idx >= 0) {
+    wordEl.innerHTML =
+      item.word.slice(0, idx) +
+      '<span class="game-ph" id="game-ph-span">' + item.word.slice(idx, idx + item.highlight.length) + '</span>' +
+      item.word.slice(idx + item.highlight.length);
+  } else {
+    wordEl.textContent = item.word;
+  }
+
+  // Feedback vide
+  document.getElementById('game-feedback').textContent = '';
+  document.getElementById('game-feedback').style.color = '';
+
+  // Choix : la bonne réponse + 3 distracteurs
+  const distractors = ALL_PH_KEYS.filter(k => k !== item.ph)
+    .sort(() => Math.random() - 0.5).slice(0, 3);
+  const choices = [item.ph, ...distractors].sort(() => Math.random() - 0.5);
+
+  const choicesEl = document.getElementById('game-choices');
+  choicesEl.innerHTML = choices.map(k => {
+    const ph = PHONEMES[k];
+    return `<button class="game-choice" onclick="answerGame('${k}','${item.ph}')">${ph.label}</button>`;
+  }).join('');
+}
+
+function answerGame(chosen, correct) {
+  if (gameAnswered) return;
+  gameAnswered = true;
+
+  const isCorrect = chosen === correct;
+  const feedback  = document.getElementById('game-feedback');
+  const phSpan    = document.getElementById('game-ph-span');
+
+  // Révéler le phonème dans le mot
+  if (phSpan) { phSpan.style.opacity = '1'; phSpan.style.color = PHONEMES[correct].fg; }
+
+  // Colorier les boutons
+  document.querySelectorAll('.game-choice').forEach(btn => {
+    btn.disabled = true;
+    if (btn.textContent === PHONEMES[correct].label) btn.classList.add(isCorrect && btn.textContent === PHONEMES[chosen].label ? 'correct' : 'reveal');
+    if (btn.textContent === PHONEMES[chosen].label && !isCorrect) btn.classList.add('wrong');
+  });
+
+  if (isCorrect) {
+    gameScore++;
+    feedback.textContent = '✅ Bravo !';
+    feedback.style.color = 'var(--sauge)';
+    // Jouer le son
+    playSound(correct);
+  } else {
+    feedback.textContent = '❌ C'était ' + PHONEMES[correct].label + ' !';
+    feedback.style.color = 'var(--terr)';
+    playSound(correct);
+  }
+
+  // Passer à la question suivante après 1.8s
+  gameIndex++;
+  setTimeout(() => {
+    const qEl = document.getElementById('game-img-card');
+    qEl.style.animation = 'none';
+    void qEl.offsetWidth;
+    qEl.style.animation = 'fadeIn 0.3s ease';
+    showGameQuestion();
+  }, 1800);
+}
+
+function playSound(phKey) {
+  const ph = PHONEMES[phKey];
+  if (!ph) return;
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  const src = SOUNDS[phKey];
+  if (src) {
+    const audio = new Audio(src);
+    currentAudio = audio;
+    audio.play().catch(() => {});
+  }
+}
+
+function showGameResult() {
+  document.getElementById('game-question').style.display = 'none';
+  document.getElementById('game-result').style.display   = 'flex';
+
+  // Score final sur 10
+  const score = gameScore;
+  document.getElementById('result-score').textContent = score + ' / 10';
+
+  // Étoiles
+  let stars, title, sub;
+  if (score === 10) {
+    stars = '⭐⭐⭐'; title = 'Parfait !'; sub = 'Tu connais tous les sons !';
+  } else if (score >= 7) {
+    stars = '⭐⭐'; title = 'Très bien !'; sub = 'Encore un peu d'entraînement et tu seras parfait !';
+  } else if (score >= 4) {
+    stars = '⭐'; title = 'Bien joué !'; sub = 'Continue à t'entraîner, tu progresses !';
+  } else {
+    stars = '🌱'; title = 'Continue !'; sub = 'Réécoute les sons et réessaie !';
+  }
+  document.getElementById('result-stars').textContent = stars;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent   = sub;
+
+  // Progress à 100%
+  document.getElementById('game-progress-bar').style.width = '100%';
+  document.getElementById('game-score-label').textContent  = score + ' / 10';
 }
 
 // ── INIT ──────────────────────────────────────────────
