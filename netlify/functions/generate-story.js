@@ -16,7 +16,7 @@ export async function handler(event) {
 
   const prompt = `Tu es un auteur de livres pour enfants de 4 à 8 ans, créatif, drôle et inventif — dans le style de Roald Dahl pour enfants : surprenant, avec de l'humour, des rebondissements inattendus, des personnages hauts en couleur.
 
-Écris une histoire courte (4 paragraphes de 2-3 phrases chacun) avec ces paramètres :
+Écris une histoire riche et développée (8 paragraphes de 3-4 phrases chacun) avec ces paramètres :
 - Univers : ${univers}
 - Lieu : ${lieu}  
 - Objet important : ${objet}
@@ -46,6 +46,12 @@ RÈGLES STRICTES :
 7. Les personnages doivent avoir des noms originaux et amusants
 8. Inclus des détails sensoriels et des dialogues vivants
 
+STRUCTURE NARRATIVE (à respecter sur les 8 paragraphes) :
+- Paragraphes 1-2 : Introduction du héros et du lieu, situation initiale
+- Paragraphes 3-4 : Le problème ou la quête commence, premier obstacle inattendu
+- Paragraphes 5-6 : Rebondissement surprenant, dialogue savoureux, situation qui s'emballe
+- Paragraphes 7-8 : Résolution créative et morale amusante ou émouvante
+
 Réponds UNIQUEMENT en JSON valide sans markdown :
 {
   "titre": "Titre accrocheur et amusant",
@@ -53,7 +59,11 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
     "Paragraphe 1 avec annotations <ph son=\\"clé\\">lettres</ph>...",
     "Paragraphe 2...",
     "Paragraphe 3...",
-    "Paragraphe 4..."
+    "Paragraphe 4...",
+    "Paragraphe 5...",
+    "Paragraphe 6...",
+    "Paragraphe 7...",
+    "Paragraphe 8..."
   ]
 }`;
 
@@ -67,7 +77,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
       },
       body: JSON.stringify({
         model: "claude-opus-4-5",
-        max_tokens: 2000,
+        max_tokens: 3500,
         messages: [{ role: "user", content: prompt }],
       }),
     });
