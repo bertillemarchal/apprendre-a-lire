@@ -204,41 +204,6 @@
       transition: opacity 0.2s;
     }
 
-    /* Tooltip image phonème au hover */
-    .game-choice-wrap {
-      position: relative;
-    }
-    .game-ph-tooltip {
-      display: none;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: #F0EBE3;
-      border: 1.5px solid #DDD5CC;
-      border-radius: 12px;
-      padding: 8px 12px;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-      z-index: 10;
-      min-width: 80px;
-      pointer-events: none;
-      animation: fadeIn 0.15s ease;
-    }
-    .game-ph-tooltip .tt-img  { font-size: 2.2rem; line-height: 1; display: block; }
-    .game-ph-tooltip .tt-word { font-family: 'Lora', serif; font-style: italic; font-size: 0.7rem; color: #999; display: block; margin-top: 3px; }
-    .game-choice-wrap:hover .game-ph-tooltip { display: block; }
-    /* Petite flèche du tooltip */
-    .game-ph-tooltip::after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 6px solid transparent;
-      border-top-color: #DDD5CC;
-    }
-
     /* Score final */
     .game-result {
       width: 100%;
@@ -506,7 +471,7 @@ function renderDebutant() {
     const media = ph.isImg
       ? `<img src="${ph.img}" alt="${ph.mot}"/>`
       : `<span class="s-emoji">${ph.emoji}</span>`;
-    return `<div class="sound-card" style="border-color:${ph.fg}" onclick="openPopup('${k}')">
+    return `<div class="sound-card" style="border-color:${ph.fg}" onclick="playDirectSound('${k}', this)">
       ${media}
       <div class="s-label" style="color:${ph.fg}">${ph.label}</div>
       <div class="s-word">${ph.mot}</div>
@@ -889,26 +854,26 @@ function parseParagraph(text, usedPhs) {
 
 // Mots avec UN SEUL phonème difficile, illustrables
 const GAME_WORDS = [
-  { emoji:"🚗", word:"VOITURE",   ph:"oi",  highlight:"oi"  },
-  { emoji:"⛺", word:"TENTE",     ph:"an",  highlight:"en"  },
-  { emoji:"🐘", word:"ÉLÉPHANT",  ph:"an",  highlight:"an"  },
-  { emoji:"🎪", word:"CHAPITEAU", ph:"eau", highlight:"eau" },
-  { emoji:"🏔️", word:"MONTAGNE",  ph:"on",  highlight:"on"  },
-  { emoji:"🚂", word:"TRAIN",     ph:"in",  highlight:"ain" },
-  { emoji:"🍇", word:"RAISIN",    ph:"in",  highlight:"in"  },
-  { emoji:"🐬", word:"DAUPHIN",   ph:"in",  highlight:"in"  },
-  { emoji:"🦷", word:"DENT",      ph:"an",  highlight:"en"  },
-  { emoji:"🍷", word:"VIN",       ph:"in",  highlight:"in"  },
-  { emoji:"🌻", word:"TOURNESOL", ph:"ou",  highlight:"ou"  },
-  { emoji:"🍊", word:"ORANGE",    ph:"an",  highlight:"an"  },
-  { emoji:"🦩", word:"FLAMANT",   ph:"an",  highlight:"an"  },
-  { emoji:"🎀", word:"RUBAN",     ph:"an",  highlight:"an"  },
-  { emoji:"🌲", word:"SAPIN",     ph:"in",  highlight:"in"  },
-  { emoji:"🐰", word:"LAPIN",     ph:"in",  highlight:"in"  },
-  { emoji:"🐱", word:"CHAT",      ph:"ch",  highlight:"ch"  },
-  { emoji:"🍬", word:"BONBON",    ph:"on",  highlight:"on"  },
-  { emoji:"📦", word:"CARTON",    ph:"on",  highlight:"on"  },
-  { emoji:"🏠", word:"TOIT",      ph:"oi",  highlight:"oi"  },
+  { emoji:"🚗", word:"VOITURE",   ph:"oi",  highlight:"oi",  exclude:[] },
+  { emoji:"⛺", word:"TENTE",     ph:"an",  highlight:"en",  exclude:[] },
+  { emoji:"🐘", word:"ÉLÉPHANT",  ph:"an",  highlight:"an",  exclude:["ai"] },
+  { emoji:"🎪", word:"CHAPITEAU", ph:"eau", highlight:"eau", exclude:["ch"] },
+  { emoji:"🏔️", word:"MONTAGNE",  ph:"on",  highlight:"on",  exclude:[] },
+  { emoji:"🚂", word:"TRAIN",     ph:"in",  highlight:"ain", exclude:[] },
+  { emoji:"🍇", word:"RAISIN",    ph:"in",  highlight:"in",  exclude:["ai"] },
+  { emoji:"🐬", word:"DAUPHIN",   ph:"in",  highlight:"in",  exclude:["eau"] },
+  { emoji:"🦷", word:"DENT",      ph:"an",  highlight:"en",  exclude:[] },
+  { emoji:"🍷", word:"VIN",       ph:"in",  highlight:"in",  exclude:[] },
+  { emoji:"🌻", word:"TOURNESOL", ph:"ou",  highlight:"ou",  exclude:[] },
+  { emoji:"🍊", word:"ORANGE",    ph:"an",  highlight:"an",  exclude:[] },
+  { emoji:"🦩", word:"FLAMANT",   ph:"an",  highlight:"an",  exclude:[] },
+  { emoji:"🎀", word:"RUBAN",     ph:"an",  highlight:"an",  exclude:[] },
+  { emoji:"🌲", word:"SAPIN",     ph:"in",  highlight:"in",  exclude:[] },
+  { emoji:"🐰", word:"LAPIN",     ph:"in",  highlight:"in",  exclude:[] },
+  { emoji:"🐱", word:"CHAT",      ph:"ch",  highlight:"ch",  exclude:[] },
+  { emoji:"🍬", word:"BONBON",    ph:"on",  highlight:"on",  exclude:[] },
+  { emoji:"📦", word:"CARTON",    ph:"on",  highlight:"on",  exclude:[] },
+  { emoji:"🏠", word:"TOIT",      ph:"oi",  highlight:"oi",  exclude:[] },
 ];
 
 const ALL_PH_KEYS = ["ou","on","ai","an","in","eau","oi","oin","ch"];
@@ -962,23 +927,15 @@ function showGameQuestion() {
   document.getElementById('game-feedback').style.color = '';
 
   // Choix : la bonne réponse + 3 distracteurs
-  const distractors = ALL_PH_KEYS.filter(k => k !== item.ph)
+  const distractors = ALL_PH_KEYS
+    .filter(k => k !== item.ph && !(item.exclude || []).includes(k))
     .sort(() => Math.random() - 0.5).slice(0, 3);
   const choices = [item.ph, ...distractors].sort(() => Math.random() - 0.5);
 
   const choicesEl = document.getElementById('game-choices');
   choicesEl.innerHTML = choices.map(k => {
     const ph = PHONEMES[k];
-    const imgHtml = ph.isImg
-      ? `<img src="${ph.img}" style="width:40px;height:40px;object-fit:contain;border-radius:6px"/>`
-      : `<span class="tt-img">${ph.emoji}</span>`;
-    return `<div class="game-choice-wrap">
-      <div class="game-ph-tooltip">
-        ${imgHtml}
-        <span class="tt-word">${ph.mot}</span>
-      </div>
-      <button class="game-choice" onclick="answerGame('${k}','${item.ph}')">${ph.label}</button>
-    </div>`;
+    return `<button class="game-choice" onclick="answerGame('${k}','${item.ph}')">${ph.label}</button>`;
   }).join('');
 }
 
@@ -1002,11 +959,8 @@ function answerGame(chosen, correct) {
   // Colorier les boutons
   document.querySelectorAll('.game-choice').forEach(btn => {
     btn.disabled = true;
-    const lbl = btn.textContent.trim();
-    if (lbl === PHONEMES[correct].label) {
-      btn.classList.add(isCorrect && lbl === PHONEMES[chosen].label ? 'correct' : 'reveal');
-    }
-    if (lbl === PHONEMES[chosen].label && !isCorrect) btn.classList.add('wrong');
+    if (btn.textContent === PHONEMES[correct].label) btn.classList.add(isCorrect && btn.textContent === PHONEMES[chosen].label ? 'correct' : 'reveal');
+    if (btn.textContent === PHONEMES[chosen].label && !isCorrect) btn.classList.add('wrong');
   });
 
   if (isCorrect) {
