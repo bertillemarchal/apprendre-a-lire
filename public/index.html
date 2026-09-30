@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apprendre à lire – La Tribu des Langues</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playwrite+BE+WAL:wght@400&family=Lora:ital,wght@0,400;0,600;1,400&family=Lilita+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playwrite+BE+WAL:wght@400&family=Lora:ital,wght@0,400;0,600;1,400&family=Lilita+One&family=Nunito:wght@800&display=swap" rel="stylesheet">
   <style>
     :root {
       --ardoise:  #4A6070;
@@ -49,12 +49,12 @@
 
     /* SOUNDS GRID */
     .sounds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; margin-bottom: 24px; }
-    .sound-card { background: #fff; border-radius: 14px; padding: 14px 8px 12px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); transition: transform 0.15s; border: 1.5px solid transparent; }
+    .sound-card { background: #F0EBE3; border-radius: 14px; padding: 14px 8px 12px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); transition: transform 0.15s, box-shadow 0.15s; border: 1.5px solid #DDD5CC; }
     .sound-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.11); }
     .sound-card img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; }
     .sound-card .s-emoji { font-size: 2.8rem; line-height: 1; }
-    .sound-card .s-label { font-family: 'Playwrite BE WAL', cursive; font-size: 0.82rem; line-height: 1.3; }
-    .sound-card .s-word { font-family: 'Lora', serif; font-style: italic; font-size: 0.7rem; color: #aaa; }
+    .sound-card .s-label { font-family: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif; font-weight: 800; font-size: 1rem; line-height: 1.2; letter-spacing: 0.03em; }
+    .sound-card .s-word { font-family: 'Lora', serif; font-style: italic; font-size: 0.7rem; color: #999; }
 
     /* BTN */
     .btn-primary { display: block; width: 100%; background: var(--ardoise); color: #fff; border: none; border-radius: 50px; padding: 14px 28px; font-family: 'Playwrite BE WAL', cursive; font-size: 0.95rem; cursor: pointer; transition: all 0.15s; line-height: 1.5; }
@@ -173,7 +173,7 @@
 <!-- ══ DÉBUTANT ══ -->
 <div class="page" id="page-debutant">
   <div class="app-header">
-    <h1>Les <span>sons</span><br>difficiles</h1>
+    <h1>Apprends les<br><span>sons</span> difficiles</h1>
     <div class="header-sub">Clique pour découvrir chaque son !</div>
   </div>
   <div class="inner">
