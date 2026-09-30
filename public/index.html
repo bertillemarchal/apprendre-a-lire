@@ -378,9 +378,10 @@
         <div class="game-score-label" id="game-score-label">0 / 10</div>
         <div class="game-progress"><div class="game-progress-bar" id="game-progress-bar" style="width:0%"></div></div>
       </div>
-      <div class="game-img-card" id="game-img-card">
+      <div class="game-img-card" id="game-img-card" onclick="speakCurrentWord()" title="Clique pour réécouter le mot" style="cursor:pointer">
         <span class="g-emoji" id="game-emoji"></span>
         <div class="game-word" id="game-word"></div>
+        <div style="font-family:'Lora',serif;font-style:italic;font-size:0.75rem;color:#aaa;margin-top:4px">🔊 Clique pour réécouter</div>
       </div>
       <div class="game-feedback" id="game-feedback"></div>
       <div class="game-choices" id="game-choices"></div>
@@ -825,36 +826,26 @@ function parseParagraph(text, usedPhs) {
 
 // Mots avec UN SEUL phonème difficile, illustrables
 const GAME_WORDS = [
-  { emoji:"🐻", word:"OURS",    ph:"ou",  highlight:"ou" },
-  { emoji:"🍬", word:"BON",     ph:"on",  highlight:"on" },
-  { emoji:"❤️", word:"AIMER",  ph:"ai",  highlight:"ai" },
-  { emoji:"🌙", word:"LUNE",    ph:"ou",  highlight:"u"  },  // son [u] = OU
-  { emoji:"🚂", word:"TRAIN",   ph:"in",  highlight:"ain" },
-  { emoji:"💧", word:"EAU",     ph:"eau", highlight:"eau" },
-  { emoji:"🪿", word:"OIE",     ph:"oi",  highlight:"oi" },
-  { emoji:"🍞", word:"PAIN",    ph:"in",  highlight:"ain" },
-  { emoji:"🐱", word:"CHAT",    ph:"ch",  highlight:"ch" },
-  { emoji:"👶", word:"ENFANT",  ph:"an",  highlight:"an" },
-  { emoji:"🌲", word:"SAPIN",   ph:"in",  highlight:"in" },
-  { emoji:"🐸", word:"GRENOUILLE", ph:"ou", highlight:"ou" },
-  { emoji:"🏠", word:"MAISON",  ph:"on",  highlight:"on" },
-  { emoji:"🌺", word:"FLEUR",   ph:"eau", highlight:"eu" },
-  { emoji:"⭐", word:"ÉTOILE",  ph:"oi",  highlight:"oi" },
-  { emoji:"🐟", word:"POISSON", ph:"on",  highlight:"on" },
-  { emoji:"🍎", word:"POMME",   ph:"on",  highlight:"om" },
-  { emoji:"🦁", word:"LION",    ph:"on",  highlight:"on" },
-  { emoji:"🌈", word:"PLUIE",   ph:"ou",  highlight:"ui" },
-  { emoji:"🎩", word:"CHAPEAU", ph:"eau", highlight:"eau" },
-  { emoji:"🦋", word:"PAPILLON",ph:"on",  highlight:"on" },
-  { emoji:"🐑", word:"MOUTON",  ph:"ou",  highlight:"ou" },
-  { emoji:"🌊", word:"VAGUE",   ph:"an",  highlight:"an" },
-  { emoji:"🎵", word:"CHANSON", ph:"ch",  highlight:"ch" },
-  { emoji:"👆", word:"LOIN",    ph:"oin", highlight:"oin"},
-  { emoji:"🌸", word:"PRINTEMPS",ph:"in", highlight:"in" },
-  { emoji:"🍋", word:"CITRON",  ph:"on",  highlight:"on" },
-  { emoji:"🐮", word:"VACHE",   ph:"ch",  highlight:"ch" },
-  { emoji:"🦊", word:"RENARD",  ph:"an",  highlight:"an" },
-  { emoji:"🎨", word:"PEINTURE",ph:"in",  highlight:"ein"},
+  { emoji:"🚗", word:"VOITURE",   ph:"oi",  highlight:"oi"  },
+  { emoji:"⛺", word:"TENTE",     ph:"an",  highlight:"en"  },
+  { emoji:"🐘", word:"ÉLÉPHANT",  ph:"an",  highlight:"an"  },
+  { emoji:"🎪", word:"CHAPITEAU", ph:"eau", highlight:"eau" },
+  { emoji:"🏔️", word:"MONTAGNE",  ph:"on",  highlight:"on"  },
+  { emoji:"🚂", word:"TRAIN",     ph:"in",  highlight:"ain" },
+  { emoji:"🍇", word:"RAISIN",    ph:"in",  highlight:"in"  },
+  { emoji:"🐬", word:"DAUPHIN",   ph:"in",  highlight:"in"  },
+  { emoji:"🦷", word:"DENT",      ph:"an",  highlight:"en"  },
+  { emoji:"🍷", word:"VIN",       ph:"in",  highlight:"in"  },
+  { emoji:"🌻", word:"TOURNESOL", ph:"ou",  highlight:"ou"  },
+  { emoji:"🍊", word:"ORANGE",    ph:"an",  highlight:"an"  },
+  { emoji:"🦩", word:"FLAMANT",   ph:"an",  highlight:"an"  },
+  { emoji:"🎀", word:"RUBAN",     ph:"an",  highlight:"an"  },
+  { emoji:"🌲", word:"SAPIN",     ph:"in",  highlight:"in"  },
+  { emoji:"🐰", word:"LAPIN",     ph:"in",  highlight:"in"  },
+  { emoji:"🐱", word:"CHAT",      ph:"ch",  highlight:"ch"  },
+  { emoji:"🍬", word:"BONBON",    ph:"on",  highlight:"on"  },
+  { emoji:"📦", word:"CARTON",    ph:"on",  highlight:"on"  },
+  { emoji:"🏠", word:"TOIT",      ph:"oi",  highlight:"oi"  },
 ];
 
 const ALL_PH_KEYS = ["ou","on","ai","an","in","eau","oi","oin","ch"];
@@ -888,6 +879,9 @@ function showGameQuestion() {
   document.getElementById('game-progress-bar').style.width = pct + '%';
   document.getElementById('game-score-label').textContent  = gameScore + ' / ' + gameIndex;
 
+  // Prononcer le mot automatiquement après un léger délai
+  setTimeout(() => speakWord(item.word), 400);
+
   // Image + mot
   document.getElementById('game-emoji').textContent = item.emoji;
 
@@ -917,6 +911,12 @@ function showGameQuestion() {
     const ph = PHONEMES[k];
     return `<button class="game-choice" onclick="answerGame('${k}','${item.ph}')">${ph.label}</button>`;
   }).join('');
+}
+
+function speakCurrentWord() {
+  // Le mot en cours est à gameIndex (pas encore incrémenté pendant la question)
+  const currentIdx = Math.min(gameIndex, gameQueue.length - 1);
+  if (gameQueue[currentIdx]) speakWord(gameQueue[currentIdx].word);
 }
 
 function answerGame(chosen, correct) {
@@ -970,6 +970,20 @@ function playSound(phKey) {
     currentAudio = audio;
     audio.play().catch(() => {});
   }
+}
+
+function speakWord(word) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(word.toLowerCase());
+  u.lang  = "fr-FR";
+  u.rate  = 0.75;
+  u.pitch = 1.1;
+  const voices = window.speechSynthesis.getVoices();
+  const fr = voices.find(v => v.lang.startsWith("fr") && /amelie|marie|audrey|female|femme/i.test(v.name))
+           || voices.find(v => v.lang.startsWith("fr"));
+  if (fr) u.voice = fr;
+  window.speechSynthesis.speak(u);
 }
 
 function showGameResult() {
