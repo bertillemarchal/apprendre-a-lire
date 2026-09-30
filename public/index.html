@@ -204,6 +204,41 @@
       transition: opacity 0.2s;
     }
 
+    /* Tooltip image phonème au hover */
+    .game-choice-wrap {
+      position: relative;
+    }
+    .game-ph-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #F0EBE3;
+      border: 1.5px solid #DDD5CC;
+      border-radius: 12px;
+      padding: 8px 12px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      z-index: 10;
+      min-width: 80px;
+      pointer-events: none;
+      animation: fadeIn 0.15s ease;
+    }
+    .game-ph-tooltip .tt-img  { font-size: 2.2rem; line-height: 1; display: block; }
+    .game-ph-tooltip .tt-word { font-family: 'Lora', serif; font-style: italic; font-size: 0.7rem; color: #999; display: block; margin-top: 3px; }
+    .game-choice-wrap:hover .game-ph-tooltip { display: block; }
+    /* Petite flèche du tooltip */
+    .game-ph-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #DDD5CC;
+    }
+
     /* Score final */
     .game-result {
       width: 100%;
@@ -477,6 +512,31 @@ function renderDebutant() {
       <div class="s-word">${ph.mot}</div>
     </div>`;
   }).join('');
+}
+
+// ── SON DIRECT (page débutant) ───────────────────────
+function playDirectSound(k, el) {
+  const ph = PHONEMES[k];
+  if (!ph) return;
+
+  // Feedback visuel : border colorée brièvement
+  el.style.background = ph.bg;
+  el.style.borderColor = ph.fg;
+  setTimeout(() => {
+    el.style.background = '#F0EBE3';
+    el.style.borderColor = ph.fg;
+  }, 800);
+
+  // Jouer le son
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  const src = SOUNDS[k];
+  if (src) {
+    const audio = new Audio(src);
+    currentAudio = audio;
+    audio.play().catch(() => playTTS(ph));
+  } else {
+    playTTS(ph);
+  }
 }
 
 // ── POPUP ─────────────────────────────────────────────
@@ -909,7 +969,16 @@ function showGameQuestion() {
   const choicesEl = document.getElementById('game-choices');
   choicesEl.innerHTML = choices.map(k => {
     const ph = PHONEMES[k];
-    return `<button class="game-choice" onclick="answerGame('${k}','${item.ph}')">${ph.label}</button>`;
+    const imgHtml = ph.isImg
+      ? `<img src="${ph.img}" style="width:40px;height:40px;object-fit:contain;border-radius:6px"/>`
+      : `<span class="tt-img">${ph.emoji}</span>`;
+    return `<div class="game-choice-wrap">
+      <div class="game-ph-tooltip">
+        ${imgHtml}
+        <span class="tt-word">${ph.mot}</span>
+      </div>
+      <button class="game-choice" onclick="answerGame('${k}','${item.ph}')">${ph.label}</button>
+    </div>`;
   }).join('');
 }
 
@@ -933,8 +1002,11 @@ function answerGame(chosen, correct) {
   // Colorier les boutons
   document.querySelectorAll('.game-choice').forEach(btn => {
     btn.disabled = true;
-    if (btn.textContent === PHONEMES[correct].label) btn.classList.add(isCorrect && btn.textContent === PHONEMES[chosen].label ? 'correct' : 'reveal');
-    if (btn.textContent === PHONEMES[chosen].label && !isCorrect) btn.classList.add('wrong');
+    const lbl = btn.textContent.trim();
+    if (lbl === PHONEMES[correct].label) {
+      btn.classList.add(isCorrect && lbl === PHONEMES[chosen].label ? 'correct' : 'reveal');
+    }
+    if (lbl === PHONEMES[chosen].label && !isCorrect) btn.classList.add('wrong');
   });
 
   if (isCorrect) {
