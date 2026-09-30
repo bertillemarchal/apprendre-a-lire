@@ -944,7 +944,7 @@ function answerGame(chosen, correct) {
     // Jouer le son
     playSound(correct);
   } else {
-    feedback.textContent = '❌ C'était ' + PHONEMES[correct].label + ' !';
+    feedback.textContent = '❌ C\'était : ' + PHONEMES[correct].label + ' !';
     feedback.style.color = 'var(--terr)';
     playSound(correct);
   }
