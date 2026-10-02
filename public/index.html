@@ -19,17 +19,18 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Lora', serif; background: var(--cream); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
 
-    .page { display: none; width: 100%; max-width: 680px; padding: 0 0 72px; flex-direction: column; align-items: center; }
+    .page { display: none; width: 100%; padding: 0 0 72px; flex-direction: column; align-items: center; }
     .page.active { display: flex; }
 
     /* HEADER */
-    .app-header { width: 100%; background: #AECBB8; padding: 36px 24px 28px; text-align: center; margin-bottom: 28px; }
+    .app-header { width: 100%; background: #AECBB8; padding: 56px 24px 48px; text-align: center; margin-bottom: 36px; }
+    .app-header > * { max-width: 680px; margin-left: auto; margin-right: auto; }
     .app-header .logo { font-family: 'Lora', serif; font-style: italic; font-size: 0.78rem; color: rgba(255,255,255,0.6); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; }
-    .app-header h1 { font-family: 'Playwrite BE WAL', cursive; font-weight: 400; font-size: clamp(1.6rem, 4vw, 2.2rem); color: #3a4f3a; line-height: 1.3; }
+    .app-header h1 { font-family: 'Playwrite BE WAL', cursive; font-weight: 400; font-size: clamp(2rem, 6vw, 3rem); color: #3a4f3a; line-height: 1.3; }
     .app-header h1 span { color: var(--moutarde); }
     .app-header .header-sub { font-family: 'Lora', serif; font-style: italic; font-size: 0.95rem; color: rgba(58,79,58,0.7); margin-top: 8px; }
 
-    .inner { width: 100%; padding: 0 20px; display: flex; flex-direction: column; align-items: center; }
+    .inner { width: 100%; max-width: 680px; margin: 0 auto; padding: 0 20px; display: flex; flex-direction: column; align-items: center; }
 
     /* BACK BTN */
     .back-btn { align-self: flex-start; background: none; border: 1.5px solid var(--ardoise); border-radius: 50px; padding: 6px 16px; font-family: 'Lora', serif; font-size: 0.85rem; color: var(--ardoise); cursor: pointer; margin-bottom: 22px; transition: all 0.15s; }
@@ -41,15 +42,15 @@
 
     /* ENTRY CARDS */
     .entry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
-    .entry-card { border-radius: 16px; padding: 24px 16px 20px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; border: none; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
-    .entry-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.13); }
+    .entry-card { border-radius: 18px; padding: 28px 16px 22px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #ece8e0; background: #fff; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+    .entry-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.10); }
     .entry-card .e-icon { font-size: 2.8rem; line-height: 1; }
-    .entry-card .e-title { font-family: 'Playwrite BE WAL', cursive; font-size: 0.88rem; color: #fff; line-height: 1.4; }
-    .entry-card .e-sub { font-family: 'Lora', serif; font-style: italic; font-size: 0.75rem; color: rgba(255,255,255,0.72); line-height: 1.3; }
+    .entry-card .e-title { font-family: 'Playwrite BE WAL', cursive; font-size: 0.88rem; color: var(--ardoise); line-height: 1.4; }
+    .entry-card .e-sub { font-family: 'Lora', serif; font-style: italic; font-size: 0.75rem; color: #999; line-height: 1.3; }
 
     /* SOUNDS GRID */
     .sounds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; margin-bottom: 24px; }
-    .sound-card { background: #F0EBE3; border-radius: 14px; padding: 14px 8px 12px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); transition: transform 0.15s, box-shadow 0.15s; border: 1.5px solid #DDD5CC; }
+    .sound-card { background: #fff; border-radius: 18px; border: 1px solid #ece8e0; padding: 14px 8px 12px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); transition: transform 0.15s, box-shadow 0.15s; border: 1.5px solid #DDD5CC; }
     .sound-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.11); }
     .sound-card img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; }
     .sound-card .s-emoji { font-size: 2.8rem; line-height: 1; }
@@ -107,14 +108,14 @@
     .s-val { font-family: 'Playwrite BE WAL', cursive; font-size: 0.78rem; color: #fff; display: block; line-height: 1.3; }
 
     /* SONS BANNER */
-    .sons-banner { background: #fff; border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .sons-banner { background: #fff; border-radius: 18px; border: 1px solid #ece8e0; padding: 16px 18px; margin-bottom: 16px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
     .sons-banner-title { font-family: 'Lora', serif; font-style: italic; font-size: 0.88rem; color: var(--sauge); margin-bottom: 12px; text-align: center; }
     .sons-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     .son-badge { display: flex; align-items: center; gap: 5px; border-radius: 8px; padding: 6px 12px; font-family: 'Playwrite BE WAL', cursive; font-size: 0.78rem; cursor: pointer; transition: transform 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.07); line-height: 1.3; }
     .son-badge:hover { transform: translateY(-2px); }
 
     /* STORY CARD */
-    .story-card { background: #fff; border-radius: 16px; box-shadow: 0 3px 16px rgba(0,0,0,0.08); padding: 26px 22px; margin-bottom: 16px; width: 100%; }
+    .story-card { background: #fff; border-radius: 18px; border: 1px solid #ece8e0; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 28px 24px; margin-bottom: 16px; width: 100%; }
     .story-title { font-family: 'Playwrite BE WAL', cursive; font-size: 1.2rem; color: var(--ardoise); text-align: center; margin-bottom: 4px; line-height: 1.4; }
     .story-label { font-family: 'Lora', serif; font-style: italic; font-size: 0.82rem; color: var(--sauge); text-align: center; margin-bottom: 18px; }
     .story-para { font-family: 'Lilita One', cursive; font-size: 1.12rem; line-height: 2.2; color: #3a3530; margin-bottom: 18px; }
@@ -301,13 +302,13 @@
   </div>
   <div class="inner">
     <div class="entry-grid">
-      <button class="entry-card" style="background:var(--sauge)" onclick="goTo('page-debutant')">
-        <span class="e-icon">🌱</span>
+      <button class="entry-card" onclick="goTo('page-debutant')">
+        <div style="width:56px;height:56px;border-radius:50%;background:#D8E6DC;display:flex;align-items:center;justify-content:center;font-size:1.8rem">🌱</div>
         <span class="e-title">Je suis débutant</span>
         <span class="e-sub">Je découvre les sons difficiles</span>
       </button>
-      <button class="entry-card" style="background:var(--terr)" onclick="goTo('page-choix-univers')">
-        <span class="e-icon">📚</span>
+      <button class="entry-card" onclick="goTo('page-choix-univers')">
+        <div style="width:56px;height:56px;border-radius:50%;background:#EDE0DA;display:flex;align-items:center;justify-content:center;font-size:1.8rem">📚</div>
         <span class="e-title">Je connais les phonèmes</span>
         <span class="e-sub">Je veux lire une histoire</span>
       </button>
@@ -776,28 +777,49 @@ const FALLBACK_STORIES = {
 ]}),
 };
 
-function getFallbackStory(univers, lieu, objet) {
+function getFallbackStory(univers, lieu, objet, heroName) {
   const key = univers + '-' + lieu;
   const builder = FALLBACK_STORIES[key];
   if (!builder) return null;
   const story = builder(objet);
-  // Convertir le format texte avec balises <ph> en format story
-  return {
-    titre: story.titre,
-    paragraphes: story.paragraphes,
-  };
+
+  // Remplacer $prenom-kid par le prénom ou "le héros"
+  const hero = heroName || 'le héros';
+  function replaceHero(str) {
+    return str.replace(/\$prenom-kid/g, hero);
+  }
+
+  // Format segments (histoires corrigées)
+  if (story.segments) {
+    const newSegs = story.segments.map(seg => {
+      if (seg.t !== undefined) return { t: replaceHero(seg.t) };
+      if (seg.ph !== undefined) return { ph: seg.ph, g: replaceHero(seg.g) };
+      return seg;
+    });
+    return { titre: replaceHero(story.titre), segments: newSegs };
+  }
+
+  // Format paragraphes (anciennes histoires)
+  if (story.paragraphes) {
+    return {
+      titre: replaceHero(story.titre),
+      paragraphes: story.paragraphes.map(replaceHero),
+    };
+  }
+
+  return null;
 }
 
 // ── GÉNÉRATION HISTOIRE VIA NETLIFY FUNCTION ──────────
-async function buildAndShow() {
+function buildAndShow() {
   state.prenom = document.getElementById('prenom-input').value.trim();
+  const heroName = state.prenom || 'le héros';
 
   goTo('page-histoire');
 
   // Résumé
   const uI=UNIVERS_LIST.find(u=>u.value===state.univers);
   const lI=LIEUX_LIST.find(l=>l.value===state.lieu);
-  const prenomLabel = state.prenom ? ` · 🧒 ${state.prenom}` : '';
   document.getElementById('summary-bar').innerHTML=
     [{label:'Univers',icon:uI?.icon,val:state.univers},
      {label:'Lieu',icon:lI?.icon,val:state.lieu},
@@ -805,64 +827,74 @@ async function buildAndShow() {
     .map(s=>`<div class="s-item"><span style="font-size:1.2rem">${s.icon}</span>
       <div><span class="s-lbl">${s.label}</span><span class="s-val">${s.val}</span></div>
     </div>`).join('')
-    + (state.prenom ? `<div class="s-item"><span style="font-size:1.2rem">🧒</span><div><span class="s-lbl">Héros</span><span class="s-val">${state.prenom}</span></div></div>` : '');
+    + `<div class="s-item"><span style="font-size:1.2rem">🧒</span><div><span class="s-lbl">Héros</span><span class="s-val">${heroName}</span></div></div>`;
 
-  document.getElementById('loading-box').style.display='block';
   document.getElementById('story-content').style.display='none';
   document.getElementById('error-box').style.display='none';
 
-  try {
-    const res = await fetch('/.netlify/functions/generate-story', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        univers: state.univers,
-        lieu: state.lieu,
-        objet: state.objet,
-        prenom: state.prenom,
-      })
-    });
-
-    const story = await res.json();
-    if (story.error) throw new Error(story.error);
-    if (!story.paragraphes) throw new Error('Format invalide');
-
+  // Direct fallback — pas d'API
+  const story = getFallbackStory(state.univers, state.lieu, state.objet, heroName);
+  if (story) {
     renderStory(story);
-
-  } catch(err) {
-    console.warn('API indisponible, utilisation du fallback:', err.message);
-    // Essayer le fallback
-    const fallback = getFallbackStory(state.univers, state.lieu, state.objet);
-    if (fallback) {
-      document.getElementById('loading-box').style.display='none';
-      renderStory(fallback);
-    } else {
-      document.getElementById('loading-box').style.display='none';
-      document.getElementById('error-box').style.display='block';
-      document.getElementById('error-msg').textContent = 'Oups ! Une erreur est survenue. Réessaie !';
-    }
+  } else {
+    document.getElementById('error-box').style.display='block';
+    document.getElementById('error-msg').textContent = 'Histoire bientôt disponible !';
   }
 }
 
 // ── RENDU HISTOIRE ─────────────────────────────────────
 function renderStory(story) {
-  document.getElementById('loading-box').style.display='none';
+  
 
   // Titre
   document.getElementById('story-title').textContent = story.titre;
 
-  // Parser les phonèmes dans le texte
   const storyText = document.getElementById('story-text');
   storyText.innerHTML = '';
-
   const usedPhs = new Set();
 
-  story.paragraphes.forEach((para, i) => {
-    const div = document.createElement('div');
-    div.className = 'story-para';
-    div.innerHTML = parseParagraph(para, usedPhs);
-    storyText.appendChild(div);
-  });
+  // Format API : {titre, paragraphes: [...strings]}
+  if (story.paragraphes && story.paragraphes.length > 0) {
+    story.paragraphes.forEach((para, i) => {
+      const div = document.createElement('div');
+      div.className = 'story-para';
+      div.innerHTML = parseParagraph(para, usedPhs);
+      storyText.appendChild(div);
+    });
+  }
+  // Format fallback : {titre, segments: [...]}
+  else if (story.segments && story.segments.length > 0) {
+    let currentDiv = document.createElement('div');
+    currentDiv.className = 'story-para';
+    story.segments.forEach(seg => {
+      if (seg.br) {
+        storyText.appendChild(currentDiv);
+        currentDiv = document.createElement('div');
+        currentDiv.className = 'story-para';
+        return;
+      }
+      if (seg.t !== undefined) {
+        currentDiv.appendChild(document.createTextNode(seg.t));
+        return;
+      }
+      if (seg.ph) {
+        const ph = PHONEMES[seg.ph];
+        if (!ph) { currentDiv.appendChild(document.createTextNode(seg.g)); return; }
+        usedPhs.add(seg.ph);
+        const s = document.createElement('span');
+        s.className = 'ph-hl';
+        s.style.background = ph.bg;
+        s.style.color = ph.fg;
+        s.textContent = seg.g;
+        s.dataset.ph = seg.ph;
+        currentDiv.appendChild(s);
+      }
+    });
+    storyText.appendChild(currentDiv);
+    storyText.querySelectorAll('.ph-hl').forEach(el => {
+      el.onclick = () => openPopup(el.dataset.ph);
+    });
+  }
 
   // Ajouter les listeners sur les phonèmes
   storyText.querySelectorAll('.ph-hl').forEach(el => {
@@ -954,6 +986,7 @@ const GAME_WORDS = [
   { emoji:"🐱", word:"CHAT",      ph:"ch",  highlight:"ch",  exclude:[] },
   { emoji:"🍬", word:"BONBON",    ph:"on",  highlight:"on",  exclude:[] },
   { emoji:"📦", word:"CARTON",    ph:"on",  highlight:"on",  exclude:[] },
+  { emoji:"🏡", word:"MAISON",    ph:"ai",  highlight:"ai",  exclude:["on"] },
   { emoji:"🏠", word:"TOIT",      ph:"oi",  highlight:"oi",  exclude:[] },
 ];
 
