@@ -70,6 +70,11 @@
     .home-art img { height: 100px; width: auto; max-width: 31%; object-fit: contain; }
     .home-art.photo { padding: 0; min-height: 0; }
     .home-art.photo img { width: 100%; max-width: none; height: auto; max-height: 210px; object-fit: cover; }
+    .home-art.home-sons { align-items: center; padding: 14px 14px 6px; }
+    .sons9 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 10px; width: 100%; max-width: 320px; }
+    .s9 { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .home-art .s9 img { height: 58px; width: auto; max-width: 100%; object-fit: contain; }
+    .s9 b { font-family: 'Nunito', Arial, sans-serif; font-weight: 900; font-size: 0.85rem; line-height: 1.1; text-align: center; }
     .home-body { padding: 12px 16px 18px; }
     .home-title { font-family: 'Playwrite BE WAL', cursive; font-size: 1.05rem; color: var(--ardoise); line-height: 1.45; display: block; }
     .home-sub { font-family: 'Lora', serif; font-style: italic; font-size: 1rem; color: #888; display: block; margin-top: 4px; line-height: 1.35; }
@@ -113,6 +118,8 @@
     .sons-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     .son-badge { display: flex; align-items: center; gap: 5px; border-radius: 8px; padding: 6px 12px; font-family: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: transform 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.07); line-height: 1.2; }
     .son-badge:hover { transform: translateY(-2px); }
+    .son-badge.chip-pulse { animation: chippulse 0.45s ease; }
+    @keyframes chippulse { 50% { transform: scale(1.1); } }
     .son-badge .badge-img { width: 44px; height: 44px; object-fit: contain; flex-shrink: 0; }
     .book-page.cover .son-badge { padding: 6px 16px 6px 8px; font-size: 1.15rem; border-radius: 14px; gap: 8px; }
 
@@ -196,26 +203,6 @@
 
 
     /* ── ZONE AIDE JEU ── */
-    .help-zone {
-      background: #fff; border: 1px solid #ece8e0;
-      border-radius: 18px; padding: 14px 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      width: 100%;
-    }
-    .help-title {
-      font-family: 'Playwrite BE WAL', cursive; font-size: 0.82rem;
-      color: var(--ardoise); text-align: center;
-      margin-bottom: 12px; line-height: 1.5;
-    }
-    .help-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-    }
-    .help-card { border-radius: 14px; border: 1.5px solid; padding: 10px 6px 8px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: transform 0.15s; }
-    .help-card:hover { transform: translateY(-2px); }
-    .help-card img { width: 100%; max-width: 104px; height: 104px; object-fit: contain; }
-    .help-card .h-emoji { font-size: 4.5rem; line-height: 104px; height: 104px; }
-    .help-card .h-label { font-family: 'Nunito', Arial, sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1.15; }
-    @media (min-width: 480px) { .help-card img { max-width: 124px; height: 124px; } .help-card .h-label { font-size: 1.55rem; } }
 
     /* ── CONFETTIS ── */
     .confetti-container {
@@ -317,6 +304,8 @@
     .game-choice.wrong   { background: #F2E0DE; border-color: var(--terr);  color: var(--terr); animation: shake 0.4s ease; }
     .game-choice.reveal  { background: #D8E8DC; border-color: var(--sauge); color: var(--sauge); }
     .game-choice:disabled { cursor: not-allowed; opacity: 0.7; }
+    .game-choice { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px 10px 12px; }
+    .game-choice .gc-img { width: 88px; height: 88px; object-fit: contain; pointer-events: none; }
 
     @keyframes bounce { 0%{transform:scale(1)} 40%{transform:scale(1.1)} 100%{transform:scale(1)} }
     @keyframes shake  { 0%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} 100%{transform:translateX(0)} }
@@ -372,10 +361,13 @@
       /* accueil : 3 cartes côte à côte */
       #home-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; }
       .home-card { margin-bottom: 0; }
-      .home-art { min-height: 250px; padding: 28px 16px 6px; gap: 8px; }
+      .home-art { min-height: 290px; padding: 28px 16px 6px; gap: 8px; }
       .home-art img { height: 160px; }
-      .home-art.photo { min-height: 0; height: 250px; }
-      .home-art.photo img { height: 250px; max-height: none; }
+      .home-art.home-sons { padding: 18px 16px 8px; }
+      .home-art .s9 img { height: 66px; }
+      .s9 b { font-size: 0.95rem; }
+      .home-art.photo { min-height: 0; height: 290px; }
+      .home-art.photo img { height: 290px; max-height: none; }
       .home-body { padding: 16px 20px 24px; }
       .home-title { font-size: 1.25rem; }
       .home-sub { font-size: 1.1rem; }
@@ -401,11 +393,8 @@
       .game-img-card img { width: 170px; height: 170px; }
       .game-word { font-size: 2.4rem; }
       .game-choices { gap: 18px; }
-      .game-choice { padding: 26px 14px; font-size: 1.8rem; }
-      .help-title { font-size: 1rem; }
-      .help-grid { gap: 14px; }
-      .help-card img { max-width: 150px; height: 150px; }
-      .help-card .h-label { font-size: 1.8rem; }
+      .game-choice { padding: 22px 14px 18px; font-size: 1.8rem; }
+      .game-choice .gc-img { width: 130px; height: 130px; }
       /* livre */
       .book, .book-nav { max-width: 920px; margin-left: auto; margin-right: auto; }
       .book-page { padding: 48px 64px; min-height: 480px; }
@@ -454,7 +443,6 @@
     <button class="back-btn" onclick="goTo('page-accueil')">← Retour</button>
     <div class="step-question">Choisis l'univers de ton histoire</div>
     <div class="choice-grid" id="grid-univers"></div>
-    <button class="btn-primary" id="btn-univers" disabled onclick="goTo('page-choix-lieu')">Suivant →</button>
   </div>
 </div>
 
@@ -467,7 +455,6 @@
     <button class="back-btn" onclick="goTo('page-choix-univers')">← Retour</button>
     <div class="step-question">Où ton histoire va-t-elle se passer ?</div>
     <div class="choice-grid" id="grid-lieu"></div>
-    <button class="btn-primary" id="btn-lieu" disabled onclick="goTo('page-choix-objet')">Suivant →</button>
   </div>
 </div>
 
@@ -480,7 +467,6 @@
     <button class="back-btn" onclick="goTo('page-choix-lieu')">← Retour</button>
     <div class="step-question">Avec quel objet ?</div>
     <div class="choice-grid" id="grid-objet"></div>
-    <button class="btn-primary" id="btn-objet" disabled onclick="goNextFromObjet()">Suivant →</button>
   </div>
 </div>
 
@@ -507,7 +493,6 @@
     <button class="back-btn" onclick="goTo('page-choix-prenom')">← Retour</button>
     <div class="step-question">Choisis la taille de ton histoire</div>
     <div class="choice-grid single" id="grid-taille"></div>
-    <button class="btn-primary" id="btn-taille" disabled onclick="buildAndShow()">✨ Créer mon histoire !</button>
   </div>
 </div>
 
@@ -572,10 +557,6 @@
       <div class="game-choices" id="game-choices"></div>
 
       <!-- Zone aide -->
-      <div class="help-zone">
-        <div class="help-title">Pour t'aider un peu ✨</div>
-        <div class="help-grid" id="help-grid"></div>
-      </div>
     </div>
 
     <!-- Résultat final -->
@@ -623,7 +604,7 @@ const PHONEMES = {
   on:  { label:"ON",       img:IMG_BONBON, isImg:true,  ref:["B","ON","BON"],  bg:"#EDE8D8", fg:"#8E8A5A", emoji:"🍬", mot:"BONBON", sound:"sounds/son-on.mp3" },
   oi:  { label:"OI",       img:IMG_OIE,    isImg:true,  ref:["","OI","E"],     bg:"#E0D8D6", fg:"#9E5E56", emoji:"🪿", mot:"OIE",    sound:"sounds/son-oi.mp3" },
   ou:  { label:"OU",       img:IMG_OURS,   isImg:true,  ref:["","OU","RS"],    bg:"#E4DDCC", fg:"#8A6A40", emoji:"🐻", mot:"OURS",   sound:"sounds/son-ou.mp3" },
-  an:  { label:"AN / EN / AM",  img:IMG_ENFANT, isImg:true,  ref:["","EN","FANT"],      bg:"#D8E4DC", fg:"#4E7458", emoji:"👶", mot:"ENFANT", sound:"sounds/son-an.mp3" },
+  an:  { label:"AN / EN",  img:IMG_ENFANT, isImg:true,  ref:["","EN","FANT"],      bg:"#D8E4DC", fg:"#4E7458", emoji:"👶", mot:"ENFANT", sound:"sounds/son-an.mp3" },
   in:  { label:"IN / AIN", img:IMG_PAIN,   isImg:true,  ref:["P","AIN",""],    bg:"#D8DDE4", fg:"#4A6070", emoji:"🍞", mot:"PAIN",   sound:"sounds/son-in.mp3" },
   eau: { label:"EAU / AU", img:IMG_EAU, isImg:true, ref:["","EAU",""],     bg:"#E8E4CC", fg:"#A89030", emoji:"💧", mot:"EAU",    sound:"sounds/son-eau.mp3" },
   ai:  { label:"AI",       img:IMG_COEUR,  isImg:true,  ref:["","AI","MER"],   bg:"#EAD8D6", fg:"#9E5E56", emoji:"⭐", mot:"AIMER",  sound:"sounds/son-ai.mp3" },
@@ -649,7 +630,6 @@ function restart() {
   state.univers=null; state.lieu=null; state.objet=null; state.taille=null; state.prenom='';
   document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
   document.getElementById('prenom-input').value='';
-  ['btn-univers','btn-lieu','btn-objet'].forEach(id=>document.getElementById(id).disabled=true);
   goTo('page-accueil');
 }
 
@@ -701,8 +681,12 @@ function renderHome() {
   const card = (art, title, sub, action) => '<button class="home-card" onclick="' + action + '">' + art + '<div class="home-body"><span class="home-title">' + title + '</span><span class="home-sub">' + sub + '</span></div></button>';
   document.getElementById('home-cards').innerHTML =
       card(art3(['ou', 'ch', 'oi']), 'Découvrir les sons', 'Les 9 sons difficiles, en images', "goTo('page-debutant')")
-    + card(art3(['on', 'in', 'an']), 'Jouer avec les sons', 'Trouve le bon son !', "goTo('page-jeu'); startGame()")
+    + card(sons9(), 'Jouer avec les sons', 'Trouve le bon son !', "goTo('page-jeu'); startGame()")
     + card(story, 'Lire une histoire', '96 histoires à lire, comme un livre', "goTo('page-choix-univers')");
+}
+function sons9() {
+  return '<div class="home-art home-sons"><div class="sons9">' + SONS_ORDER.map(k =>
+    '<div class="s9"><img src="' + PHONEMES[k].img + '" alt=""><b style="color:' + sc(k) + '">' + PHONEMES[k].label + '</b></div>').join('') + '</div></div>';
 }
 function homeArt(keys) { return '<div class="home-art">' + keys.map(k => '<img src="' + PHONEMES[k].img + '" alt="">').join('') + '</div>'; }
 
@@ -737,9 +721,9 @@ const state = {univers:null, lieu:null, objet:null, taille:null, prenom:''};
 // Indique si les histoires existent en plusieurs longueurs (étape « Taille »)
 const HAS_SIZES = Object.values(STORIES_DB).some(st => Object.keys(st.tailles).length > 1);
 
-function renderChoices(gridId,list,key,btnId) {
+function renderChoices(gridId,list,key) {
   document.getElementById(gridId).innerHTML=list.map(item=>
-    `<button class="choice-btn ${state[key]===item.value?'selected':''}" onclick="selectChoice('${key}','${item.value}','${gridId}','${btnId}',this)">
+    `<button class="choice-btn ${state[key]===item.value?'selected':''}" onclick="selectChoice('${key}','${item.value}','${gridId}',this)">
       <span class="c-icon">${item.icon}</span>
       <span class="c-lbl">${item.label}</span>
       <span class="c-sub">${item.sub}</span>
@@ -747,11 +731,21 @@ function renderChoices(gridId,list,key,btnId) {
   ).join('');
 }
 
-function selectChoice(key,value,gridId,btnId,el) {
+// Un clic sur une carte = on passe tout de suite à la page suivante (le prénom garde son bouton « Suivant »)
+let CHOICE_DELAY_MS = 220, choiceLock = false;
+const NEXT_STEP = {
+  univers: () => goTo('page-choix-lieu'),
+  lieu:    () => goTo('page-choix-objet'),
+  objet:   () => goNextFromObjet(),
+  taille:  () => buildAndShow(),
+};
+function selectChoice(key,value,gridId,el) {
+  if (choiceLock) return;
   state[key]=value;
   document.getElementById(gridId).querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
-  document.getElementById(btnId).disabled=false;
+  const go = () => { choiceLock = false; (NEXT_STEP[key] || (() => {}))(); };
+  if (CHOICE_DELAY_MS > 0) { choiceLock = true; setTimeout(go, CHOICE_DELAY_MS); } else { go(); }
 }
 
 // ── BULLE : un toucher sur un phonème = la petite illustration du son, près du phonème (ni son, ni lettres) ──
@@ -819,8 +813,7 @@ function goNextFromPrenom() {
   const sizes = Object.keys(story.tailles);
   if (sizes.length === 1) { state.taille = sizes[0]; buildAndShow(); return; }
   state.taille = null;
-  renderChoices('grid-taille', TAILLES_LIST.filter(t => sizes.includes(t.value)), 'taille', 'btn-taille');
-  document.getElementById('btn-taille').disabled = true;
+  renderChoices('grid-taille', TAILLES_LIST.filter(t => sizes.includes(t.value)), 'taille');
   goTo('page-choix-taille');
 }
 
@@ -887,6 +880,11 @@ function dropIllusPage() {
   bookTo(bookIndex > idx ? bookIndex - 1 : bookIndex, true);
 }
 
+function playChip(k, el) {
+  hidePhBubble(); playPhonemeSound(k);
+  el.classList.remove('chip-pulse'); void el.offsetWidth; el.classList.add('chip-pulse');
+}
+
 function renderStory(story) {
   const track = document.getElementById('story-text'); track.innerHTML = '';
   const usedPhs = new Set();
@@ -915,7 +913,7 @@ function renderStory(story) {
     + '<div class="sons-banner-title" style="margin-top:26px">— Les sons dont tu vas avoir besoin —</div>'
     + '<div class="sons-row" id="sons-banner-row">' + phKeys.map(k => {
         const ph = PHONEMES[k];
-        return '<div class="son-badge" style="background:' + ph.bg + ';color:' + sc(k) + '" onclick="showPhBubble(\'' + k + '\', this)"><img class="badge-img" src="' + ph.img + '" alt="">' + ph.label + '</div>';
+        return '<div class="son-badge" style="background:' + ph.bg + ';color:' + sc(k) + '" onclick="playChip(\'' + k + '\', this)"><img class="badge-img" src="' + ph.img + '" alt="">' + ph.label + '</div>';
       }).join('') + '</div>'
     + '<button class="btn-primary" onclick="bookGo(1)">Commencer ▶</button>';
   document.getElementById('story-title').textContent = story.titre;
@@ -1044,24 +1042,8 @@ function startGame() {
   document.getElementById('game-question').style.display = 'flex';
 
   // Rendre la zone d'aide
-  renderHelpGrid();
   showGameQuestion();
   if (!consigneJouee) { consigneJouee = true; playConsigne(); }
-}
-
-function renderHelpGrid() {
-  const grid = document.getElementById('help-grid');
-  if (!grid) return;
-  grid.innerHTML = SONS_ORDER.map(k => {
-    const ph = PHONEMES[k];
-    const media = ph.isImg
-      ? `<img src="${ph.img}" alt="${ph.mot}"/>`
-      : `<span class="h-emoji">${ph.emoji}</span>`;
-    return `<div class="help-card" style="border-color:${ph.fg};background:${ph.bg}" onclick="playDirectSound('${k}', this)">
-      <div class="h-label" style="color:${ph.fg}">${ph.label}</div>
-      ${media}
-    </div>`;
-  }).join('');
 }
 
 function showGameQuestion() {
@@ -1103,7 +1085,7 @@ function showGameQuestion() {
   const choicesEl = document.getElementById('game-choices');
   choicesEl.innerHTML = choices.map(k => {
     const ph = PHONEMES[k];
-    return `<button class="game-choice" onclick="answerGame('${k}','${item.ph}')">${ph.label}</button>`;
+    return `<button class="game-choice" onclick="answerGame('${k}','${item.ph}')"><img class="gc-img" src="${ph.img}" alt=""><span class="gc-label">${ph.label}</span></button>`;
   }).join('');
 }
 
@@ -1222,9 +1204,9 @@ function showGameResult() {
 // ── INIT ──────────────────────────────────────────────
 renderDebutant();
 renderHome();
-renderChoices('grid-univers',UNIVERS_LIST,'univers','btn-univers');
-renderChoices('grid-lieu',LIEUX_LIST,'lieu','btn-lieu');
-renderChoices('grid-objet',OBJETS_LIST,'objet','btn-objet');
+renderChoices('grid-univers',UNIVERS_LIST,'univers');
+renderChoices('grid-lieu',LIEUX_LIST,'lieu');
+renderChoices('grid-objet',OBJETS_LIST,'objet');
 window.speechSynthesis && window.speechSynthesis.getVoices();
 </script>
 </body>
