@@ -712,9 +712,9 @@ const OBJETS_LIST = [
   {value:"livre",   icon:"📕", label:"Un livre vivant",      sub:"Il s'écrit tout seul"},
 ];
 const TAILLES_LIST = [
-  {value:"petit",  icon:"🐾", label:"Un petit pas",        sub:"Une histoire courte"},
-  {value:"balade", icon:"🌳", label:"Une balade",          sub:"Une histoire de taille moyenne"},
-  {value:"long",   icon:"🏔️", label:"Une grande aventure", sub:"Une histoire bien longue"},
+  {value:"petit",  icon:"🐾", label:"Un petit pas",        sub:"Pour lire tout seul"},
+  {value:"balade", icon:"🌳", label:"Une balade",          sub:"Un peu plus longue"},
+  {value:"long",   icon:"🏔️", label:"Une grande aventure", sub:"À lire avec un adulte"},
 ];
 const state = {univers:null, lieu:null, objet:null, taille:null, prenom:''};
 
@@ -835,17 +835,18 @@ function buildAndShow() {
 
   document.getElementById('story-content').style.display = 'none';
   document.getElementById('error-box').style.display = 'none';
-  renderStory({ titre: story.titre, image: illusUrl(), paragraphes: story.tailles[taille].map(p => fillHero(p, heroName)) });
+  renderStory({ titre: (story.titres && story.titres[taille]) || story.titre, image: illusUrl(), strict: taille === 'petit', paragraphes: story.tailles[taille].map(p => fillHero(p, heroName)) });
 }
 
 // ── RENDU HISTOIRE ─────────────────────────────────────
 // Regroupe les paragraphes en pages : un paragraphe par page, sauf les tout petits qui se mettent à deux
 function bookWords(p) { return p.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length; }
-function paginate(paras) {
+function paginate(paras, strict) {
   const pages = []; let cur = [], w = 0;
   paras.forEach(p => {
     const n = bookWords(p);
-    if (cur.length && (w >= 22 || w + n > 42)) { pages.push(cur); cur = []; w = 0; }
+    const newPage = strict ? (w >= 6 || w + n > 16) : (w >= 22 || w + n > 42);   // débutant : une page par paragraphe
+    if (cur.length && newPage) { pages.push(cur); cur = []; w = 0; }
     cur.push(p); w += n;
   });
   if (cur.length) pages.push(cur);
@@ -891,7 +892,7 @@ function renderStory(story) {
   const mk = (cls) => { const d = document.createElement('div'); d.className = 'book-page ' + cls; track.appendChild(d); return d; };
 
   const cover = mk('cover');
-  const textPages = paginate(story.paragraphes || []);
+  const textPages = paginate(story.paragraphes || [], story.strict);
   const midAfter = Math.ceil(textPages.length / 2);
   textPages.forEach((paras, i) => {
     mk('text').innerHTML = paras.map(p => '<div class="story-para">' + parseParagraph(p, usedPhs) + '</div>').join('');
