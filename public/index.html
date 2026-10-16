@@ -129,7 +129,7 @@
     .story-label { font-family: 'Lora', serif; font-style: italic; font-size: 0.82rem; color: var(--sauge); text-align: center; margin-bottom: 18px; }
     .story-para { font-family: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif; font-weight: 600; font-size: 1.25rem; line-height: 2; color: #111; margin-bottom: 18px; }
     .story-para:last-child { margin-bottom: 0; }
-    .ph-hl { font-weight: 900; cursor: pointer; user-select: none; }
+    .ph-hl { font-weight: 900; cursor: pointer; user-select: none; text-decoration-line: underline; text-decoration-style: dotted; text-decoration-thickness: 2px; text-underline-offset: 6px; text-decoration-color: currentColor; }
     .ph-hl:hover { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 5px; }
 
     /* ── ILLUSTRATION AU MILIEU DE L'HISTOIRE ── */
@@ -172,6 +172,8 @@
     .book-page.illus img { width: 100%; max-width: 560px; max-height: 62vh; object-fit: contain; display: block; border-radius: 16px; }
     .book-page.cover .btn-primary, .book-page.end button { max-width: 320px; margin-left: auto; margin-right: auto; }
     .book-page.end button { margin-top: 10px; }
+    .cover-help { font-family: 'Lora', serif; font-style: italic; font-size: 1.1rem; color: #777; margin: 0 0 18px; line-height: 1.4; }
+    @media (min-width: 800px) { .cover-help { font-size: 1.25rem; } }
     .book-end-star { font-size: 3.2rem; line-height: 1; margin-bottom: 6px; }
     .book-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 0 20px; width: 100%; }
     .nav-arrow { width: 64px; height: 64px; border-radius: 50%; border: none; background: var(--ardoise); color: #fff; font-size: 1.5rem; cursor: pointer; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: transform 0.15s, background 0.15s; -webkit-tap-highlight-color: transparent; }
@@ -181,6 +183,16 @@
     .book-dots i { width: 9px; height: 9px; border-radius: 50%; background: #d5d0c8; display: block; transition: transform 0.2s, background 0.2s; }
     .book-dots i.on { background: var(--moutarde); transform: scale(1.4); }
     @media (prefers-reduced-motion: reduce) { .book-track { transition: none; } }
+
+    /* ── DOIGT D'AIDE : montre qu'on peut toucher les sons en couleur ── */
+    #ph-hint { position: absolute; z-index: 880; display: flex; align-items: center; gap: 6px; pointer-events: none; opacity: 0; transition: opacity 0.25s; }
+    #ph-hint.show { opacity: 1; }
+    #ph-hint .hint-finger { font-size: 2.1rem; line-height: 1; animation: hintbounce 1s ease-in-out infinite; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+    #ph-hint .hint-label { background: var(--ardoise); color: #fff; font-family: 'Nunito', Arial, sans-serif; font-weight: 800; font-size: 0.95rem; padding: 3px 12px; border-radius: 50px; white-space: nowrap; }
+    @keyframes hintbounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+    .ph-hl.ph-hint { animation: hintglow 1.2s ease-in-out infinite; }
+    @keyframes hintglow { 0%, 100% { text-shadow: 0 0 0 transparent; } 50% { text-shadow: 0 0 10px currentColor, 0 0 3px currentColor; } }
+    @media (prefers-reduced-motion: reduce) { #ph-hint .hint-finger, .ph-hl.ph-hint { animation: none; } }
 
     /* ── BULLE DE SON (toucher d'un phonème) ── */
     #ph-bubble { position: absolute; z-index: 900; max-width: 250px; border: 2px solid var(--bc, #4A6070); border-radius: 16px; padding: 8px 14px 8px 10px;
@@ -748,6 +760,36 @@ function selectChoice(key,value,gridId,el) {
   if (CHOICE_DELAY_MS > 0) { choiceLock = true; setTimeout(go, CHOICE_DELAY_MS); } else { go(); }
 }
 
+// ── DOIGT D'AIDE ─────────────────────────────────────
+// Sur la 1re page de texte, un petit doigt désigne le 1er son en couleur, tant que l'enfant n'a pas encore touché un son.
+let hintLearnedMem = false, hintTimer = null, hintEl = null, hintSpan = null;
+function hintLearned() { try { return hintLearnedMem || sessionStorage.getItem('hintLearned') === '1'; } catch (e) { return hintLearnedMem; } }
+function hideHint(learned) {
+  clearTimeout(hintTimer); hintTimer = null;
+  if (hintEl) { hintEl.classList.remove('show'); }
+  if (hintSpan) { hintSpan.classList.remove('ph-hint'); hintSpan = null; }
+  if (learned) { hintLearnedMem = true; try { sessionStorage.setItem('hintLearned', '1'); } catch (e) {} }
+}
+function showHint() {
+  if (hintLearned()) return;
+  const track = document.getElementById('story-text'); const page = track.children[bookIndex];
+  if (!page || !page.classList.contains('text')) return;
+  const span = page.querySelector('.ph-hl'); if (!span) return;
+  if (!hintEl) {
+    hintEl = document.createElement('div'); hintEl.id = 'ph-hint';
+    hintEl.innerHTML = '<span class="hint-finger">👆</span><span class="hint-label">Touche !</span>'; document.body.appendChild(hintEl);
+  }
+  const r = span.getBoundingClientRect();
+  hintEl.style.display = 'flex'; hintEl.style.left = '0px'; hintEl.style.top = '0px';
+  const w = hintEl.offsetWidth, vw = document.documentElement.clientWidth || window.innerWidth;
+  let left = r.left + r.width / 2 - 18; left = Math.max(8, Math.min(left, vw - w - 8));
+  hintEl.style.left = (left + window.pageXOffset) + 'px'; hintEl.style.top = (r.bottom + window.pageYOffset + 2) + 'px';
+  span.classList.add('ph-hint'); hintSpan = span;
+  requestAnimationFrame(() => hintEl.classList.add('show'));
+  clearTimeout(hintTimer); hintTimer = setTimeout(() => hideHint(false), 9000);
+}
+window.addEventListener('resize', () => hideHint(false));
+
 // ── BULLE : un toucher sur un phonème = la petite illustration du son, près du phonème (ni son, ni lettres) ──
 let phBubbleTimer = null, phActiveEl = null;
 function playPhonemeSound(k) {
@@ -763,6 +805,7 @@ function hidePhBubble() {
 }
 function showPhBubble(k, el) {
   const ph = PHONEMES[k]; if (!ph) return;
+  hideHint(true);   // l'enfant a touché un son : il a compris
   el.classList.remove('ph-pulse'); void el.offsetWidth; el.classList.add('ph-pulse');
   if (phActiveEl && phActiveEl !== el) phActiveEl.classList.remove('ph-active');
   phActiveEl = el; if (el.classList.contains('ph-hl')) el.classList.add('ph-active');
@@ -868,7 +911,8 @@ function bookTo(i, instant) {
   document.querySelectorAll('#book-dots i').forEach((d, k) => d.classList.toggle('on', k === bookIndex));
   document.getElementById('btn-prev').disabled = bookIndex === 0;
   document.getElementById('btn-next').disabled = bookIndex === bookCount - 1;
-  hidePhBubble();
+  hidePhBubble(); hideHint(false);
+  if (!instant && track.children[bookIndex] && track.children[bookIndex].classList.contains('text')) { const firstText = [...track.children].findIndex(c => c.classList.contains('text')); if (bookIndex === firstText) setTimeout(() => { if (bookIndex === firstText) showHint(); }, 850); }
   if (!instant && track.children[bookIndex] && track.children[bookIndex].classList.contains('end')) launchConfetti(70);
 }
 function bookGo(d) { bookTo(bookIndex + d); }
@@ -916,7 +960,7 @@ function renderStory(story) {
         const ph = PHONEMES[k];
         return '<div class="son-badge" style="background:' + ph.bg + ';color:' + sc(k) + '" onclick="playChip(\'' + k + '\', this)"><img class="badge-img" src="' + ph.img + '" alt="">' + ph.label + '</div>';
       }).join('') + '</div>'
-    + '<button class="btn-primary" onclick="bookGo(1)">Commencer ▶</button>';
+    + '<div class="cover-help">👆 Touche les sons en couleur pour être aidé</div><button class="btn-primary" onclick="bookGo(1)">Commencer ▶</button>';
   document.getElementById('story-title').textContent = story.titre;
 
   track.querySelectorAll('.ph-hl').forEach(el => { el.onclick = () => showPhBubble(el.dataset.ph, el); });
