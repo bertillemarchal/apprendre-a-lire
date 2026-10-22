@@ -770,6 +770,24 @@ const sc = k => STORY_COLORS[k] || '#333';
 const SONS_ORDER = ["ou","on","ai","an","in","eau","oi","oin","ch"];
 
 // ── NAVIGATION ────────────────────────────────────────
+// ── AUDIENCE (Umami : sans cookies, sans donnée personnelle ; le prénom de l'enfant n'est JAMAIS envoyé) ──────────────
+const UMAMI_ID = 'fd604ab9-0902-40aa-9929-6ef0d5ab3d81';   // identifiant du site chez Umami (Website ID). Vide = aucune mesure.
+const UMAMI_DOMAINS = '';   // ← à renseigner : l'adresse du vrai site (ex. monsite.netlify.app) pour ne pas compter les aperçus et les tests
+const UMAMI_SRC = 'https://cloud.umami.is/script.js';
+function initUmami(id, domains) {
+  if (!id || document.querySelector('script[data-website-id]')) return;
+  if (!/^https?:$/.test(location.protocol) || /^(localhost|127\.|\[::1\])/.test(location.hostname)) return;   // jamais sur un fichier local, un aperçu ou un test local
+  const sc = document.createElement('script'); sc.defer = true; sc.src = UMAMI_SRC; sc.setAttribute('data-website-id', id); sc.setAttribute('data-do-not-track', 'true');
+  if (domains) sc.setAttribute('data-domains', domains); document.head.appendChild(sc);
+}
+function umTrack(name, data) { try { if (window.umami && typeof window.umami.track === 'function') window.umami.track(name, data); } catch (e) {} }
+function umPage(path, title) { try { if (window.umami && typeof window.umami.track === 'function') window.umami.track(p => Object.assign({}, p, { url: path, title: title || path })); } catch (e) {} }
+const PAGE_PATHS = { 'page-accueil': '/', 'page-debutant': '/sons', 'page-jeu': '/sons/jeu', 'page-lettres-menu': '/lettres', 'page-lettres': '/lettres/decouvrir', 'page-dictee-menu': '/dictee',
+  'page-choix-univers': '/histoires/univers', 'page-choix-lieu': '/histoires/lieu', 'page-choix-objet': '/histoires/objet', 'page-choix-prenom': '/histoires/prenom', 'page-choix-taille': '/histoires/taille' };
+initUmami(UMAMI_ID, UMAMI_DOMAINS);
+const storyInfo = () => ({ univers: state.univers, lieu: state.lieu, objet: state.objet, taille: state.taille || 'long' });   // jamais le prénom
+let storyEndTracked = false;
+
 function goTo(id) {
   stopConsigne();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -777,6 +795,7 @@ function goTo(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
+  if (PAGE_PATHS[id]) umPage(PAGE_PATHS[id]);
   if (typeof hideHint === 'function') hideHint(false);
   if (id === 'page-lettres') setTimeout(() => { if (typeof showLettersHint === 'function') showLettersHint(); }, 800);
 }
@@ -806,6 +825,7 @@ function renderDebutant() {
 function playDirectSound(k, el) {
   const ph = PHONEMES[k];
   if (!ph) return;
+  umTrack('son-difficile', { son: k });
 
   // Feedback visuel : border colorée brièvement
   el.style.background = ph.bg;
@@ -947,6 +967,7 @@ function hidePhBubble() {
 function showPhBubble(k, el) {
   const ph = PHONEMES[k]; if (!ph) return;
   hideHint(true);   // l'enfant a touché un son : il a compris
+  umTrack('phoneme-touche', { son: k });
   el.classList.remove('ph-pulse'); void el.offsetWidth; el.classList.add('ph-pulse');
   if (phActiveEl && phActiveEl !== el) phActiveEl.classList.remove('ph-active');
   phActiveEl = el; if (el.classList.contains('ph-hl')) el.classList.add('ph-active');
@@ -1015,7 +1036,7 @@ function buildAndShow() {
   const taille = state.taille || 'long';
   if (!story || !story.tailles[taille]) { alert('Cette histoire arrive bientôt !'); return; }
 
-  goTo('page-histoire');
+  goTo('page-histoire'); umPage('/histoires/lecture'); umTrack('histoire-lue', storyInfo()); storyEndTracked = false;
 
   document.getElementById('story-content').style.display = 'none';
   document.getElementById('error-box').style.display = 'none';
@@ -1054,7 +1075,7 @@ function bookTo(i, instant) {
   document.getElementById('btn-next').disabled = bookIndex === bookCount - 1;
   hidePhBubble(); hideHint(false);
   if (!instant && track.children[bookIndex] && track.children[bookIndex].classList.contains('text')) { const firstText = [...track.children].findIndex(c => c.classList.contains('text')); if (bookIndex === firstText) setTimeout(() => { if (bookIndex === firstText) showHint(); }, 850); }
-  if (!instant && track.children[bookIndex] && track.children[bookIndex].classList.contains('end')) launchConfetti(70);
+  if (!instant && track.children[bookIndex] && track.children[bookIndex].classList.contains('end')) { launchConfetti(70); if (!storyEndTracked) { storyEndTracked = true; umTrack('histoire-terminee', storyInfo()); } }
 }
 function bookGo(d) { bookTo(bookIndex + d); }
 // Image absente : on retire la page d'illustration sans rien casser
@@ -1218,6 +1239,7 @@ function playConsigne() {
 }
 
 function startGame() {
+  umTrack('jeu-sons-debut');
   const shuffled = [...GAME_WORDS].sort(() => Math.random() - 0.5);
   gameQueue    = shuffled.slice(0, 10);
   gameIndex    = 0;
@@ -1362,7 +1384,7 @@ function showGameResult() {
   document.getElementById('game-result').style.display   = 'flex';
 
   // Score final sur 10
-  const score = gameScore;
+  const score = gameScore; umTrack('jeu-sons-fin', { score: score });
   document.getElementById('result-score').textContent = score + ' / 10';
 
   // Étoiles
@@ -1448,7 +1470,7 @@ function renderLettersGrid() {
   document.getElementById('grid-voyelles').innerHTML = LETTRES.map((L, i) => L.t === 'v' ? tile(L, i) : '').join('');
   document.getElementById('grid-consonnes').innerHTML = LETTRES.map((L, i) => L.t === 'c' ? tile(L, i) : '').join('');
 }
-function openLetter(i) { hideHint(false); lettersHintMem = true; try { sessionStorage.setItem('lettersHint', '1'); } catch (e) {} lettreIdx = (i + LETTRES.length) % LETTRES.length; renderLetter(); goTo('page-lettre'); }
+function openLetter(i) { hideHint(false); umPage('/lettres/lettre/' + LETTRES[(i + LETTRES.length) % LETTRES.length].l); lettersHintMem = true; try { sessionStorage.setItem('lettersHint', '1'); } catch (e) {} lettreIdx = (i + LETTRES.length) % LETTRES.length; renderLetter(); goTo('page-lettre'); }
 function renderLetter() {
   const L = LETTRES[lettreIdx], col = pal(L.l).fg, n = LETTRES.length, prev = (lettreIdx + n - 1) % n, next = (lettreIdx + 1) % n;
   const cap = L.l === 'H' ? '🤫 Le H ne fait pas de bruit !' : (LETTER_SOUNDS[lsKey(L.l)] ? '' : '🔈 Le son de la lettre arrive bientôt');
@@ -1460,6 +1482,7 @@ function renderLetter() {
   window.scrollTo({ top: 0 });
 }
 function tapLetter() {
+  umTrack('lettre-son', { lettre: LETTRES[lettreIdx].l });
   const el = document.getElementById('lbig'); el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
   playLetterAsync(LETTRES[lettreIdx].l);
 }
@@ -1474,7 +1497,7 @@ function startDictee(level) {
   if (level > 1) items = shuf(items);
   Object.assign(dict, { level, items, i: 0, written: 0 });
   document.getElementById('dict-result').style.display = 'none'; document.getElementById('dict-play').style.display = 'block';
-  goTo('page-dictee'); showDictItem();
+  goTo('page-dictee'); umPage('/dictee/etape-' + level); umTrack('dictee-debut', { etape: level }); showDictItem();
 }
 function showDictItem() {
   const it = dict.items[dict.i], letters = [...it.w];
@@ -1509,17 +1532,17 @@ function placeTile(id, idx) {
 function autoPlace(id) { const idx = dict.slots.indexOf(null); if (idx >= 0) placeTile(id, idx); }
 function clickSlot(idx) { if (dict.done || dict.slots[idx] === null) return; dict.tiles.find(t => t.id === dict.slots[idx]).used = false; dict.slots[idx] = null; dict.wrong = []; renderDict(); }
 function dictClear() { if (dict.done) return; dict.slots = dict.slots.map(() => null); dict.tiles.forEach(t => t.used = false); dict.wrong = []; renderDict(); }
-function dictRead() { const w = dictWord().toLowerCase(); if (w) speakWord(w); }   // voix de synthèse : la voix de Bertille est réservée aux sons des lettres
+function dictRead() { const w = dictWord().toLowerCase(); if (w) { umTrack('dictee-lire', { etape: dict.level }); speakWord(w); } }   // voix de synthèse : la voix de Bertille est réservée aux sons des lettres
 function checkDict() {
   const it = dict.items[dict.i], w = dictWord();
-  if (w === it.w) { dict.done = true; dict.written++; renderDict(); launchConfetti(36); speakWord('bravo'); return; }
+  if (w === it.w) { umTrack('dictee-mot-reussi', { etape: dict.level, erreurs: dict.errors }); dict.done = true; dict.written++; renderDict(); launchConfetti(36); speakWord('bravo'); return; }
   dict.errors++; if (dict.errors >= 2) dict.wrong = [...it.w].map((c, i) => w[i] !== c ? i : -1).filter(i => i >= 0);
   const sl = document.getElementById('dict-slots'); renderDict(); const s2 = document.getElementById('dict-slots'); s2.classList.add('shake'); setTimeout(() => s2.classList.remove('shake'), 450); speakWord('essaie encore');
 }
-function dictNext() { if (dict.i < dict.items.length - 1) { dict.i++; showDictItem(); } else showDictResult(); }
+function dictNext() { if (!dict.done) umTrack('dictee-mot-passe', { etape: dict.level }); if (dict.i < dict.items.length - 1) { dict.i++; showDictItem(); } else showDictResult(); }
 function showDictResult() {
   document.getElementById('dict-play').style.display = 'none'; const r = document.getElementById('dict-result'); r.style.display = 'flex';
-  document.getElementById('dict-bar').style.width = '100%'; launchConfetti(70);
+  document.getElementById('dict-bar').style.width = '100%'; launchConfetti(70); umTrack('dictee-etape-terminee', { etape: dict.level });
   r.innerHTML = '<div style="font-size:3.4rem">🎉</div><div class="sec-title" style="margin:8px 0">Bravo !</div><p class="sec-sub" style="margin:0 0 18px">Niveau ' + dict.level + ' terminé : ' + DICTEE[dict.level].titre.toLowerCase() + '.</p>'
     + '<button class="btn-primary" onclick="startDictee(' + dict.level + ')">↺ Rejouer ce niveau</button>'
     + (dict.level < 3 ? '<button class="btn-primary" style="margin-top:10px;background:var(--sauge)" onclick="startDictee(' + (dict.level + 1) + ')">Niveau suivant →</button>' : '')
