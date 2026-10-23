@@ -772,7 +772,7 @@ const SONS_ORDER = ["ou","on","ai","an","in","eau","oi","oin","ch"];
 // ── NAVIGATION ────────────────────────────────────────
 // ── AUDIENCE (Umami : sans cookies, sans donnée personnelle ; le prénom de l'enfant n'est JAMAIS envoyé) ──────────────
 const UMAMI_ID = 'fd604ab9-0902-40aa-9929-6ef0d5ab3d81';   // identifiant du site chez Umami (Website ID). Vide = aucune mesure.
-const UMAMI_DOMAINS = '';   // ← à renseigner : l'adresse du vrai site (ex. monsite.netlify.app) pour ne pas compter les aperçus et les tests
+const UMAMI_DOMAINS = 'lire.latribudeslangues.com';   // le suivi ne compte que ce site (ni les tests, ni les aperçus, ni les anciennes adresses)
 const UMAMI_SRC = 'https://cloud.umami.is/script.js';
 function initUmami(id, domains) {
   if (!id || document.querySelector('script[data-website-id]')) return;
